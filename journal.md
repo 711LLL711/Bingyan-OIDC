@@ -27,3 +27,8 @@ func PasswordVerify(hashedPwd string, plainPwd string) bool {
 ### Debug
 1. zap日志指针初始化大小写写错了，导致出现空指针    
 2. viper配置文件，不是config.go相对的路径，而是go程序运行位置相对的路径，之前写的是```viper.SetConfigName("config.json")```，应该是```viper.SetConfigName("config/config.json")```
+
+### 记录
+1. 昨天的登录和读取配置bug修好了，写了更新用户信息api,头像功能     
+2. 继续了解OAuth2.0, 了解了流程，写了一个与OAuth2提供商进行交互的demo，对流程更熟悉了   
+3. 找资料，找到了一个搭建OAuth2.0的仓库   
