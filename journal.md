@@ -21,3 +21,9 @@ func PasswordVerify(hashedPwd string, plainPwd string) bool {
 ### 总结
 1. 用go有点生疏了，写了蛮多指针引用、空指针的错误，debug了好久，邮件的部分还没做，想先推推进度    
 2. 第一次用viper,zap这些库，调试了一段时间，使用viper解析配置文件一直有问题，还是应该先看样例再开始写  
+
+
+## 10.3
+### Debug
+1. zap日志指针初始化大小写写错了，导致出现空指针    
+2. viper配置文件，不是config.go相对的路径，而是go程序运行位置相对的路径，之前写的是```viper.SetConfigName("config.json")```，应该是```viper.SetConfigName("config/config.json")```

@@ -9,9 +9,11 @@ import (
 func main() {
 	utils.InitLogger()
 
-	//TODO:viper读取配置文件出错，导致数据库未连接
-	database.Connect()
-
+	err := database.Connect()
+	if database.DB == nil || err != nil {
+		utils.Logger.Error("数据库连接失败")
+		return
+	}
 	//创建路由引擎
 	e := routes.InitRouter()
 	//启动服务

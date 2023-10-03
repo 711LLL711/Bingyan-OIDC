@@ -13,12 +13,14 @@ func InitRouter() *gin.Engine {
 	e.Use(cors.Default())
 	e.POST("/registration", controller.UserRegister)
 	e.POST("/login", controller.UserLogin)
+	//设置处理静态文件请求
+	e.Static("/upload", "./upload")
 
 	// Use jwtMiddleware for the following routes
 	authRoutes := e.Group("/")
 	authRoutes.Use(utils.MiddlewareJWTAuthorize())
 	{
-		authRoutes.POST("userupdate", controller.UserUpdate)
+		authRoutes.POST("update", controller.UserUpdate)
 	}
 
 	return e
