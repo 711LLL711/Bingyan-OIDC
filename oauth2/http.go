@@ -13,8 +13,8 @@ var (
 	code         string //授权码
 	MyToken      string //令牌
 	clientconfig = &Clientcode{
-		ClientID:     "ed9d28ab310cfce4c521",
-		ClientSecret: "ba1ad19b38d0a6ad25d5d6a73444e19675349076",
+		ClientID:     "",
+		ClientSecret: "",
 		RedirectURL:  "http://localhost:8080/oauth/redirect",
 	}
 	AuthServerInfo = &ServerInfo{
