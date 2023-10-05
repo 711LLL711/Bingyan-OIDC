@@ -88,7 +88,6 @@ func UserLogin(userReq request.UserLogInRequest) (*response.UserResponse, error)
 		utils.Logger.Info("查询错误")
 		return nil, err
 	}
-	//TODO:测试
 	//fmt.Println("user:", user)
 	//验证密码
 	if !utils.PasswordVerify(user.Password, userReq.Password) {
