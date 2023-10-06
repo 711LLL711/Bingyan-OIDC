@@ -1,7 +1,6 @@
 package manage
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
@@ -35,10 +34,10 @@ func GenerateAhthorizationCode() string {
 
 // 签发token
 // UUIDs生成,userid作为参数
-func GenerateToken(userid string) string {
-	buf := bytes.NewBufferString(userid)
-	token := uuid.NewMD5(uuid.Must(uuid.NewRandom()), buf.Bytes())
-	code := base64.URLEncoding.EncodeToString([]byte(token.String())) //base64编码
-	code = strings.ToUpper(strings.TrimRight(code, "="))              //去掉生成的=
-	return code
+func GenerateToken() string {
+	code, err := uuid.NewRandom()
+	if err != nil {
+		return ""
+	}
+	return code.String()
 }

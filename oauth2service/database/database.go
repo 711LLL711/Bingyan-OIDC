@@ -3,6 +3,7 @@ package database
 import (
 	"OIDC/oauth2service/model"
 	"OIDC/oauth2service/myerror"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -103,4 +104,18 @@ func CheckUser(user model.User) bool {
 	var queryuser model.User
 	result := DB.Where("userid = ? and password = ?", user.UserID, user.Password).First(&queryuser)
 	return result.RowsAffected > 0
+}
+
+// 检查refresh_token是否过期且存在
+func CheckRefreshToken(refreshtoken string) *model.Token {
+	var token model.Token
+	result := DB.Where("refresh = ?", refreshtoken).First(&token)
+	currentTime := time.Now()
+
+	// 比较当前时间与刷新令牌的过期时间
+
+	if result.RowsAffected == 0 || currentTime.After(token.RefreshExpiresIn) {
+		return nil
+	}
+	return &token
 }

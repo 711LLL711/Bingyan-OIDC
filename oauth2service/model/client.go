@@ -12,6 +12,12 @@ type ClientInfo struct {
 	CreateAt     time.Time `gorm:"column:create_at;type:TIMESTAMP"`
 }
 
+func NewDefaultClientInfo() *ClientInfo {
+	return &ClientInfo{
+		CreateAt: time.Now(),
+	}
+}
+
 // GetID client id
 func (c *ClientInfo) GetID() string {
 	return c.ClientID

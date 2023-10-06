@@ -52,3 +52,30 @@ func PasswordVerify(hashedPwd string, plainPwd string) bool {
 - 细节补充：redirect_url校验，error和error_description等的处理符合文档
 - 是否可以利用response_type=token或者code来实现代码复用？
 - 现在做的oauth2是一个相对独立的，便于测试，后续需要把它结合到之前写的用户管理api里
+
+## 10.6
+### 记录
+1. 补充完成了scope,state,token的过期时间,redirect_url校验等       
+2. 了解OIDC & OAuth2，又看了一些OAuth2文档的细节，发现自己之前实现的还不规范。     
+[fron youtube](https://www.youtube.com/watch?v=t18YB3xDfXI)
+3. 狂写假期作业和报告ing
+
+## OAuth2&OIDC笔记
+### OAuth2
+#### 概念
+- client  申请访问资源的应用
+- resource owner 资源所有者
+- resource server 资源服务器
+- authorization server 认证服务器
+
+#### Authorization Code Flow 
+1. client向authorization server申请授权码       
+2. authorization server要求用户登录，向resource owner询问是否授权      
+3. resource owner同意授权，authorization server向client发送授权码authorization code     
+4. client向authorization server发送授权码authorization code，申请access token  
+5. authorization server验证授权码authorization code，验证通过后向client发送access token    
+6. client访问resource server的api发送access token，申请资源,（在scope范围内的权限）      
+
+### OIDC
+#### Authentication VS Authorization 
+OIDC基于OAuth2，可以实现authentication。在OAuth2中，client并不知道resource owner的身份，只是有得到授权。而在OIDC中，client可以通过server发来的IdToken(jwt格式)解析jwt得到resource owner的身份信息。
