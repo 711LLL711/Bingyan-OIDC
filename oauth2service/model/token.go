@@ -10,18 +10,25 @@ func NewToken() *Token {
 }
 
 type Token struct {
-	ClientID         string `gorm:"foreignKey"` //链接到clientinfo的clientid
-	RedirectURI      string
-	Scope            string
-	Code             string
+	ClientID         string    `gorm:"foreignKey;column:client_id"` //链接到clientinfo的clientid
+	UserID           string    `gorm:"column:user_id"`
+	RedirectURI      string    `gorm:"column:redirect_url"`
+	Scope            string    `gorm:"column:scope"`
+	Code             string    `gorm:"column:code"` //授权码
 	CodeCreateAt     time.Time `gorm:"column:code_create_at;type:DATETIME"`
-	CodeExpiresIn    string    //time.duration要转换成string存储
-	Access           string
-	AccessCreateAt   time.Time `gorm:"column:access_create_at;type:TIMESTAMP"`
-	AccessExpiresIn  string
-	Refresh          string
-	RefreshCreateAt  time.Time `gorm:"column:refresh_create_at;type:TIMESTAMP"`
-	RefreshExpiresIn string
+	CodeExpiresIn    string    `gorm:"column:xode_expire_in"` //time.duration要转换成string存储
+	Access           string    `gorm:"column:access"`         //令牌
+	AccessCreateAt   time.Time `gorm:"column:access_create_at;type:DATETIME"`
+	AccessExpiresIn  string    `gorm:"column:access_expire_in"`
+	Refresh          string    `gorm:"column:refresh"`
+	RefreshCreateAt  time.Time `gorm:"column:refresh_create_at;type:DATETIME"`
+	RefreshExpiresIn string    `gorm:"column:refresh_expire_in"`
+}
+
+type QueryTokenRequest struct {
+	ClientID     string
+	ClientSecret string
+	Code         string
 }
 
 // 默认过期时间

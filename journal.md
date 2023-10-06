@@ -37,7 +37,18 @@ func PasswordVerify(hashedPwd string, plainPwd string) bool {
 ## 10.4
 ### 记录
 1. 开始做OAuth2，定义数据类型、路由、服务器、数据库等
-2. 想的是先把授权码模式做出来，再来补充其他的授权类型 
+2. 想的是先把授权码模式基本逻辑写出来，再结合到用户管理api里 
 3. TODO: 
 - 申请OAuth2的用户id在哪个阶段传送？放在哪个结构体里比较好
 - 继续完善路由
+
+## 10.5
+### 记录
+1. 逻辑基本完成，但是还有很多细节没处理，比如scope,state,token的过期时间等
+2. 测试已经完成的逻辑
+
+### TODO
+- scope,state,token的过期时间等
+- 细节补充：redirect_url校验，error和error_description等的处理符合文档
+- 是否可以利用response_type=token或者code来实现代码复用？
+- 现在做的oauth2是一个相对独立的，便于测试，后续需要把它结合到之前写的用户管理api里
