@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"OIDC/model"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
@@ -40,4 +41,12 @@ func GenerateToken() string {
 		return ""
 	}
 	return code.String()
+}
+
+func GenerateIdentifier() string {
+	return ""
+}
+
+func GenerateIDToken(user model.User) string {
+	return ""
 }

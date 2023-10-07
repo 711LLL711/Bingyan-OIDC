@@ -51,6 +51,7 @@ func NewDefaultToken() *Token {
 		CodeExpiresIn:    DefaultCodeCreateAt.Add(DefaultCodeExpireDuration),
 		AccessExpiresIn:  DefaultAccessCreateAt.Add(DefaultAccessExpireDuration),
 		RefreshExpiresIn: DefaultAccessCreateAt.Add(DefaultRefreshExpireDuration),
+		RefreshCreateAt:  DefaultRefreshCreateAt,
 	}
 }
 

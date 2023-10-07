@@ -25,8 +25,9 @@ type Response struct {
 }
 
 type ResponseBody struct {
-	Hint string
-	Data interface{}
+	Success bool
+	Hint    string
+	Data    interface{}
 }
 
 // 创建请求
@@ -45,13 +46,17 @@ func (r *Response) SetHeader(key, value string) {
 	r.Header.Set(key, value)
 }
 
-func MakeResponseBody(hint string, data interface{}) ResponseBody {
+func MakeResponseBody(state bool, hint string, data interface{}) ResponseBody {
 	return ResponseBody{
-		Hint: hint,
-		Data: data,
+		Success: state,
+		Hint:    hint,
+		Data:    data,
 	}
 }
 
 func MakeFailedResponseBody(hint string) ResponseBody {
-	return MakeResponseBody(hint, nil)
+	return MakeResponseBody(false, hint, nil)
+}
+func MakeSuccessResponseBody(hint string, data interface{}) ResponseBody {
+	return MakeResponseBody(true, hint, data)
 }

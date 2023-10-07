@@ -47,6 +47,8 @@ func PasswordVerify(hashedPwd string, plainPwd string) bool {
 1. 逻辑基本完成，但是还有很多细节没处理，比如scope,state,token的过期时间等
 2. 测试已经完成的逻辑
 
+
+
 ### TODO
 - scope,state,token的过期时间等
 - 细节补充：redirect_url校验，error和error_description等的处理符合文档
@@ -60,6 +62,33 @@ func PasswordVerify(hashedPwd string, plainPwd string) bool {
 [fron youtube](https://www.youtube.com/watch?v=t18YB3xDfXI)
 3. 狂写假期作业和报告ing
 
+
+## 10.7
+### 记录
+1.  完成邮箱注册验证的逻辑，postman测试了用户管理路由，修好了上传头像的bug        
+2. 测试OAuth2的路由，debug
+
+### TODO
+1. 签发token时应该把token所属的用户id也存进去，这个id应该是从session取出或者存在redis中，但是我的用户管理没有做session，所以请求api还不可行      
+2. 检查token是否过期没有做       
+3. 用户管理：登出和会话管理
+4. OIDC，生成OPENID标识符，将用户信息存进jwt，返回时返回idtoken    
+5. 代码模块化做的不好，复用性差，需要狠狠重构   
+6. revoke token    
+
+### debug记录
+1. 注册账户时，明明已经写了检查是否已经注册的逻辑，但是测试时发现还是可以重复注册，代码如下：     
+~~~go
+var user *model.User
+	var err error
+	// 检查邮箱是否存在
+	result := DB.Model(&model.User{}).Where("email = ?", userReq.Email).First(user)
+	if result.RowsAffected > 0 {
+		return nil, errors.New("already exist")
+	}
+~~~
+😓user是一个空指针，所以RowsAffected一直是0，导致检查邮箱是否存在的逻辑失效。    
+2. shouldbind用于请求体，如果要用于参数请用shouldbindquery
 ## OAuth2&OIDC笔记
 ### OAuth2
 #### 概念

@@ -13,6 +13,7 @@ func InitRouter() *gin.Engine {
 	e.Use(cors.Default())
 	e.POST("/registration", controller.UserRegister)
 	e.POST("/login", controller.UserLogin)
+	e.GET("/verify", controller.UserVerify)
 	//设置处理静态文件请求
 	e.Static("/upload", "./upload")
 

@@ -22,10 +22,7 @@ func GenerateImgName(file string) (string, error) {
 	//创建文件目录
 	//uploadDir := "upload/" + time.Now().Format("2006/01/02/")
 	uploadDir := "upload/"
-	err := os.MkdirAll(uploadDir, 0755)
-	if err != nil {
-		return "", err
-	}
+	os.MkdirAll(uploadDir, os.ModePerm)
 	//生成文件名
 	filename := strconv.FormatInt(time.Now().Unix(), 10) + extname
 	//返回文件名

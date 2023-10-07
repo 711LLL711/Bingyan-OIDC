@@ -7,7 +7,7 @@ POST /application
 ### 参数
 | 参数名 | 类型 |
 | --- | --- |
-| name | string |
+| clientname | string |
 | redirect_uri | string |
 | domain | string |
 
@@ -17,13 +17,14 @@ POST /application
 GET /authorize
 ```
 ### 参数
+(query)
 | 参数名 | 类型 |
 | --- | --- |
 |response_type=code|string|
 | client_id | string |
 | redirect_uri | string |
 | scope | string |
-
+|state|string|
 ## 用户登录
 ### 请求
 ```

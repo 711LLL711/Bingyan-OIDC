@@ -61,7 +61,7 @@ func HandleClientRegister(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.MakeFailedResponseBody(myerror.Descriptions[err]))
 	}
-	c.JSON(http.StatusOK, response.MakeResponseBody("", map[string]interface{}{"client_id": clientInfo.ClientID, "client_secret": clientInfo.ClientSecret}))
+	c.JSON(http.StatusOK, response.MakeSuccessResponseBody("", map[string]interface{}{"client_id": clientInfo.ClientID, "client_secret": clientInfo.ClientSecret}))
 }
 
 // 处理客户端请求授权码
@@ -85,10 +85,10 @@ func HandleAuthorizeCodeRequest(c *gin.Context) {
 // 处理用户登录信息确认授权
 func HandleAuthLogin(c *gin.Context) {
 	clientid := c.Query("client_id")
-	redirect_uri := c.Query("redirect_uri")
+	redirect_url := c.Query("redirect_url")
 	state := c.Query("state")
 	var userinfo model.User
-	userinfo.UserID = c.PostForm("userid")
+	userinfo.Email = c.PostForm("email")
 	userinfo.Password = c.PostForm("password")
 	if !database.CheckUser(userinfo) { //检查用户是否存在且密码正确
 		c.JSON(http.StatusUnauthorized, response.MakeFailedResponseBody(myerror.Descriptions[myerror.ErrAccessDenied]))
@@ -98,7 +98,7 @@ func HandleAuthLogin(c *gin.Context) {
 	token := model.NewDefaultToken()
 	token.ClientID = clientid
 	token.UserID = userinfo.UserID
-	token.RedirectURI = redirect_uri
+	token.RedirectURI = redirect_url
 	token.Code = manage.GenerateAhthorizationCode()
 	//存储授权码
 	err := database.StoreToken(*token)
@@ -108,7 +108,7 @@ func HandleAuthLogin(c *gin.Context) {
 	}
 
 	//重定向回redirect_uri并且带上code参数
-	c.Redirect(http.StatusFound, redirect_uri+"?code="+token.Code+"&state="+state)
+	c.Redirect(http.StatusFound, redirect_url+"?code="+token.Code+"&state="+state)
 }
 
 // 如果客户端提供的autorizationcode有效，服务器签发token令牌
@@ -144,7 +144,7 @@ func HandleTokenRequest(c *gin.Context) {
 	tokeninfo["refresh_token"] = FreshToken
 	tokeninfo["scope"] = token.Scope
 	//返回json数据
-	c.JSON(http.StatusOK, response.MakeResponseBody("", tokeninfo))
+	c.JSON(http.StatusOK, response.MakeSuccessResponseBody("", tokeninfo))
 }
 
 func HandleUserInfoRequest(c *gin.Context) {
@@ -166,7 +166,7 @@ func HandleUserInfoRequest(c *gin.Context) {
 	userinfo["username"] = user.Username
 
 	//返回用户信息
-	c.JSON(http.StatusOK, response.MakeResponseBody("", userinfo))
+	c.JSON(http.StatusOK, response.MakeSuccessResponseBody("", userinfo))
 }
 
 func HandleRefresh(c *gin.Context) {
@@ -188,5 +188,5 @@ func HandleRefresh(c *gin.Context) {
 	tokeninfo["access_token"] = GenerateToken
 	tokeninfo["token_type"] = "Bearer"
 	tokeninfo["expires_in"] = token.AccessExpiresIn
-	c.JSON(http.StatusOK, response.MakeResponseBody("", tokeninfo))
+	c.JSON(http.StatusOK, response.MakeSuccessResponseBody("", tokeninfo))
 }

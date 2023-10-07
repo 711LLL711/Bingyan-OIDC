@@ -6,32 +6,36 @@ import (
 	"OIDC/model/response"
 	"OIDC/utils"
 	"errors"
+	"strconv"
 
 	"github.com/jinzhu/copier"
 )
 
 // UserRegister 用户注册 - 调用/查重/函数和/创建/用户函数
-func UserRegister(userReq *request.UserRegisterRequest) (*response.UserResponse, error) {
+func UserRegister(userReq *request.UserRegisterRequest) (*model.User, error) {
 	//检查邮箱是否存在
 	// 检查邮箱是否存在
-	var user model.User
-	result := DB.Where("email = ?", userReq.Email).First(&user)
+	var user *model.User = &model.User{}
+	var err error
+	// 检查邮箱是否存在
+	result := DB.Model(&model.User{}).Where("email = ?", userReq.Email).First(user)
 	if result.RowsAffected > 0 {
 		return nil, errors.New("already exist")
 	}
-
+	//生成随机id
+	user.ID, _ = strconv.Atoi(utils.GenerateRandomID(8))
 	// 创建用户
-	userResponse, err := createUser(userReq)
+	user, err = createUser(userReq)
 	if err != nil {
 		utils.Logger.Error("创建用户错误\n")
 		return nil, err
 	}
-	return userResponse, nil
+	return user, nil
 
 }
 
 // createUser 创建用户 - 内部函数
-func createUser(userReq *request.UserRegisterRequest) (*response.UserResponse, error) {
+func createUser(userReq *request.UserRegisterRequest) (*model.User, error) {
 	// 改用 copier 进行结构体转换
 	user := model.User{}
 	err := copier.Copy(&user, userReq)
@@ -55,30 +59,17 @@ func createUser(userReq *request.UserRegisterRequest) (*response.UserResponse, e
 	}
 	// TODO:生成用户头像
 
-	// 赋予用户名和头像
-	// width := 8
-	// user.UserName = fmt.Sprintf("User%0*s", width, strconv.FormatInt(int64(user.UserID), 10))
-	// rng := rand.New(rand.NewSource(time.Now().UnixNano()))
-	// rndNum := rng.Intn(30)
-	// user.UserAvatar = fmt.Sprintf(global.Server.Avatar.UserUrl, rndNum)
-	// // 进行更新
-	// if err := global.Sql.Model(&user).Updates(user).Error; err != nil {
-	// 	global.Logger.Errorf("更新用户名和头像错误\n")
-	// 	return nil, err
-	// }
 	// 进行返回
-	var userResponse response.UserResponse
-	err = copier.Copy(&userResponse, &user)
 	if err != nil {
 		utils.Logger.Error("用户注册时,结构体转换错误\n")
 		return nil, err
 	}
-	return &userResponse, nil
+	return &user, nil
 }
 
 func UserLogin(userReq request.UserLogInRequest) (*response.UserResponse, error) {
 	//查询邮箱是否存在
-	var user model.User
+	var user model.User = model.User{}
 	// if result := DB.Where("email = ?", userReq.Email).First(&user); result.RowsAffected == 0 {
 	// 	utils.Logger.Info("邮箱不存在")
 	// 	return nil, result.Error
@@ -94,7 +85,11 @@ func UserLogin(userReq request.UserLogInRequest) (*response.UserResponse, error)
 		utils.Logger.Info("incorrect password")
 		return nil, errors.New("incorrect password")
 	}
-
+	//邮箱是否验证
+	if !user.Verified {
+		utils.Logger.Info("邮箱未验证")
+		return nil, errors.New("unverified email")
+	}
 	//登陆成功
 	var userResponse response.UserResponse
 	//copier.Copy(&userResponse, &user)
@@ -119,4 +114,23 @@ func UserUpdate(user *model.User) (*response.UserResponse, error) {
 	userResponse.UserName = user.Username
 	userResponse.UserAvatar = user.Avatar
 	return &userResponse, nil
+}
+
+func UpdateVerified(user *model.User) error {
+	if err := DB.Model(&user).Updates(user).Where("id = ?", user.ID).Error; err != nil {
+		utils.Logger.Error("更新用户信息错误\n")
+		return err
+	}
+	return nil
+}
+
+func VerifyUser(token string) error {
+	var user model.User
+	result := DB.Where("verification_token = ?", token).First(&user)
+	if result.RowsAffected == 0 {
+		return errors.New("token not found")
+	}
+	user.Verified = true
+	DB.Model(&user).Updates(user).Where("id = ?", user.ID)
+	return nil
 }

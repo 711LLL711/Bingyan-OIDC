@@ -60,7 +60,7 @@ func StoreToken(token model.Token) error {
 }
 
 func UpdateToken(token model.Token) error {
-	err := DB.Save(&token).Error
+	err := DB.Where("client_id=?", token.ClientID).Updates(&token).Error
 	if err != nil {
 		return myerror.ErrServerError
 	}
@@ -89,9 +89,10 @@ func CheckToken(token string) *model.User {
 // 如果匹配返回token，否则返回nil
 func CheckAccessCode(a model.QueryTokenRequest) *model.Token {
 	var token model.Token
+	//TODO:查询有误
 	//根据accesscode查找client_id,client_secret是否正确
-	err := DB.Joins("INNER JOIN client ON tokens.client_id = registered_clients.client_id").
-		Where("tokens.code = ? AND registered_clients.client_id = ? AND registered_clients.client_secret = ?", a.Code, a.ClientID, a.ClientSecret).
+	err := DB.Joins("INNER JOIN client_infos ON tokens.client_id = client_infos.client_id").
+		Where("tokens.code = ? AND client_infos.client_id = ? AND client_infos.client_secret = ?", a.Code, a.ClientID, a.ClientSecret).
 		First(&token).Error
 	if err != nil {
 		return nil
@@ -99,10 +100,10 @@ func CheckAccessCode(a model.QueryTokenRequest) *model.Token {
 	return &token
 }
 
-// 检查用户id和密码是否匹配
+// 检查用户email和密码是否匹配
 func CheckUser(user model.User) bool {
 	var queryuser model.User
-	result := DB.Where("userid = ? and password = ?", user.UserID, user.Password).First(&queryuser)
+	result := DB.Where("email = ? and password = ?", user.UserID, user.Password).First(&queryuser)
 	return result.RowsAffected > 0
 }
 

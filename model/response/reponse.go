@@ -7,19 +7,19 @@ type response struct {
 }
 
 type UserResponse struct {
-	// 比较通用的结构体，用户信息三要素
-	// 场景：登陆/注册/更新/查询 用户信息后返回
-	UserID     uint   `json:"userID"`
+	UserID     int    `json:"userID"`
 	UserName   string `json:"userName" `
 	UserAvatar string `json:"userAvatar"`
 }
 
-// 定义常用错误
+// 定义常用错误response
 var (
-	UnauthorizedError = MakeFailedResponse("Unauthorized")
-	InvalidInfoError  = MakeFailedResponse("Invalid information")
-	DatabaseError     = MakeFailedResponse("Database error")
-	TimeoutError      = MakeFailedResponse("Timeout")
+	UnauthorizedError   = MakeFailedResponse("Unauthorized")
+	UnVerifiedError     = MakeFailedResponse("Unverified")
+	InvalidInfoError    = MakeFailedResponse("Invalid information")
+	DatabaseError       = MakeFailedResponse("Database error")
+	TimeoutError        = MakeFailedResponse("Timeout")
+	InternalServerError = MakeFailedResponse("Internal server error")
 )
 
 func MakeResponse(success bool, hint string, data interface{}) response {
